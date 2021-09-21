@@ -1,0 +1,53 @@
+<!-- templates/index.html -->
+<html>
+<head>  
+    <link rel="stylesheet" href="/static/style.css">
+</head>  
+<body>    
+<h1>Your favorite artist's top tracks</h1>  
+
+<details>
+<summary>
+<p1>{{artist_name}}</p1>
+</summary>
+<ol class="nav">
+    
+  {%for i in range(0, len)%}
+    {% if tracktitle[i]=='Lover' %}
+      <li style = "color:blue">{{tracktitle[i]}}</li>
+      <img src={{trackpic[i]}}>
+      <audio
+        controls
+        src={{song_preview[i]}}>
+            Your browser does not support the
+            <code>audio</code> element.
+      </audio>
+    {% else %}
+      <li>{{tracktitle[i]}}</li>
+      <img src={{trackpic[i]}}>
+      <audio
+        controls
+        src={{song_preview[i]}}>
+            Your browser does not support the
+            <code>audio</code> element.
+      </audio>
+    {% endif %}
+  {%endfor%}
+    
+</ol>  
+</details>
+<!-- <details>
+  <summary>
+    What is the meaning of life?
+    <span class="icon">👇</span>
+  </summary>
+  <p>
+    42
+  </p>
+</details> -->
+
+
+
+
+</body>
+</html>
