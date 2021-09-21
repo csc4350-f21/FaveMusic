@@ -24,26 +24,24 @@ def get_access_token(client_id, client_secret):
 
     return access_token
 
-#https://stmorse.github.io/journal/spotify-api.html
+def artist_info(token, artist_id):
 
-# BASE_URL = 'https://api.spotify.com/v1/browse/new-releases?offset=0&limit=10'
+  BASE_URL = f'https://api.spotify.com/v1/artists/{artist_id}'
 
+  headers = {
+    'Authorization': 'Bearer {token}'.format(token=token)
+    }
 
+  r = requests.get(BASE_URL, 
+                  headers=headers)
+  d = r.json()
 
-# r = requests.get(BASE_URL, 
-#                  headers=headers)
-# d = r.json()
+  artist_name = d['name']
 
-# tracktitle = []
-# artistname = [] 
-
-# try:
-#     for name in d['albums']['items']:
-#     #   print(name['name'],'-',name['artists'][0]['name'])
-#         tracktitle.append(name['name'])
-#         artistname.append(name['artists'][0]['name'])
-# except KeyError:
-#     print("Couldn't fetch data!")  
+  try:
+      return artist_name
+  except KeyError:
+      print("Couldn't fetch data!")  
 
 
 def get_top_tracks(token, artist_id):
@@ -60,13 +58,16 @@ def get_top_tracks(token, artist_id):
 
     tracktitle = []
     trackpic = [] 
-    artist_name = d['tracks'][0]['artists'][0]['name']
-    song_preview = []
+    songpreview = []
 
     for track in d['tracks']:
     
       tracktitle.append(track['name'])
       trackpic.append(track['album']['images'][1]['url'])
-      song_preview.append(track['preview_url'])
-    return tracktitle,trackpic,artist_name,song_preview
+      songpreview.append(track['preview_url'])
+    
+      
+    return tracktitle,trackpic,songpreview
 
+def get_track_info(token):
+  pass

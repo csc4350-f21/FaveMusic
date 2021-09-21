@@ -4,37 +4,26 @@
     <link rel="stylesheet" href="/static/style.css">
 </head>  
 <body>    
-<h1>Your favorite artist's top tracks</h1>  
+<h1>Your Favorite Artist's Top Track</h1>  
 
 <details>
 <summary>
 <p1>{{artist_name}}</p1>
 </summary>
-<ol class="nav">
-    
-  {%for i in range(0, len)%}
-    {% if tracktitle[i]=='Lover' %}
-      <li style = "color:blue">{{tracktitle[i]}}</li>
-      <img src={{trackpic[i]}}>
+<div class="nav">   
+
+      <a href='{{lyrics_url}}' target="_blank">{{tracktitle}}</a>
+
+      <img src={{trackpic}}>
+
       <audio
         controls
-        src={{song_preview[i]}}>
+        src={{songpreview}}>
             Your browser does not support the
             <code>audio</code> element.
       </audio>
-    {% else %}
-      <li>{{tracktitle[i]}}</li>
-      <img src={{trackpic[i]}}>
-      <audio
-        controls
-        src={{song_preview[i]}}>
-            Your browser does not support the
-            <code>audio</code> element.
-      </audio>
-    {% endif %}
-  {%endfor%}
-    
-</ol>  
+
+</div>  
 </details>
 <!-- <details>
   <summary>
