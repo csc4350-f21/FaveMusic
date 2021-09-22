@@ -1,8 +1,8 @@
 import flask
-import os
 import spotify
 import random
 import genius
+import os
 
 app = flask.Flask(__name__)
 
@@ -35,5 +35,7 @@ def main():
                             lyrics_url=lyrics_url)
 
 app.run(
+    host='0.0.0.0',
+    port=int(os.getenv("PORT",8080)),
     debug=True
 )
