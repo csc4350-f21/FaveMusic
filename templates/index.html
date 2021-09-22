@@ -4,24 +4,25 @@
     <link rel="stylesheet" href="/static/style.css">
 </head>  
 <body>    
-<h1>Your Favorite Artist's Top Track</h1>  
+<h1>Favorite Artist's Top Track</h1>  
 
 <details>
 <summary>
-<p1>{{artist_name}}</p1>
+<p1 class="glow-on-hover">{{artist_name}}</p1>
 </summary>
 <div class="nav">   
+      <div class="inner">
+        <a href='{{lyrics_url}}' target="_blank" class="font-effect-fire">{{tracktitle}}</a>
 
-      <a href='{{lyrics_url}}' target="_blank">{{tracktitle}}</a>
+        <img src={{trackpic}}>
 
-      <img src={{trackpic}}>
-
-      <audio
-        controls
-        src={{songpreview}}>
-            Your browser does not support the
-            <code>audio</code> element.
-      </audio>
+        <audio
+          controls
+          src={{songpreview}}>
+              Your browser does not support the
+              <code>audio</code> element.
+        </audio>
+      </div>
 
 </div>  
 </details>

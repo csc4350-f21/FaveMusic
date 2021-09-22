@@ -1,77 +1,154 @@
+@import url(https://fonts.googleapis.com/css?family=Audiowide&effect=fire);
 body {
-    font-family: Arial;
-    background-color: #81d4fa;
+    font-family: "Audiowide", sans-serif;
+    background-image:url('bg2.jpg');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
     text-align: center;
 }
 
-a {
+h1 {
+  font-size: 36pt;
+  letter-spacing: 2px;
+  margin-top:5%;
+  text-shadow: 1px 1px #040c50;
+  font-family: "Audiowide", sans-serif;
+}
+
+summary {
+  font-size: 36pt;
+  text-align: center;
+  letter-spacing: 1px;
+
+  margin-top: 7%;
+}
+
+.nav {
+  
+  background-image:url('bg.png');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  border-radius: 3%;
+  border: solid 3px #FC5185;
+  transition: border-width 0.6s linear;
+  width: 50%;
+  height: 350px;
+  margin-left : auto;
+  margin-right: auto;
+  margin-top: 10%;
+
+}
+.nav:hover { border-width: 10px; }
+
+.nav .inner {
+    font-size: 18px;
+    text-align: center;
+    color: black;
+    width:100%;
+    height:100%;
+}
+
+.nav .inner a {
     font-size: 36pt;
     text-align: center;
-    letter-spacing: 1px;
-    display: block;
+    width: 100%;
+    display:inline;
     text-decoration: none;
-    color: black;
+    color: rgb(185, 6, 21);
+    padding: 0%;
     
 }
-a:hover {
+
+.nav .inner a:hover {
   color: #ccc;
 }
 
-p1 {
-    font-size: 36pt;
-    text-align: center;
-    letter-spacing: 1px;
-    margin: 0 auto;
-    text-shadow: antiquewhite;
-
-}
-
-
-img {
-    border: 1px solid #ddd;
+.nav .inner img {
+    border: 6px solid #ddd;
     border-radius: 50%;
-    padding: 5px;
-    width: 150px;
+    width: 200px;
     display: block;
     margin: 0 auto;
-  }
-  
-  
+    
+  } 
+.nav .inner audio {
+    margin-top: 10px;
+}
+
 details {
     user-select: none;
 
 }
   
-/* details>summary span.icon {
-    width: 24px;
-    height: 24px;
-    transition: all 0.3s;
-    margin-right: auto;
-  } */
-/*   
-details[open] summary span.icon {
-    transform: rotate(180deg);
-  } */
-  
 summary {
-    display: flex;
+    display: block;
     cursor: pointer;
-    margin: 0 auto;
-  
   }
   
 summary::-webkit-details-marker {
     display: none;
   }
 
-div.nav {
-    padding: 200px;
-    background-color:rgb(189, 174, 44);
-    border-radius: 5%;
-    border: 1px solid #ddd;
-    width: 50px;
+.glow-on-hover {
+    width: 220px;
     height: 50px;
-    margin: 0 auto;
-  }
+    border: none;
+    outline: none;
+    color: #fff;
+    background: #111;
+    cursor: pointer;
+    position: relative;
+    z-index: 0;
+    border-radius: 10px;
+}
+
+.glow-on-hover:before {
+  content: '';
+  background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+  position: absolute;
+  top: -2px;
+  left:-2px;
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  animation: glowing 20s linear infinite;
+  opacity: 0;
+  transition: opacity .3s ease-in-out;
+  border-radius: 10px;
+}
+
+.glow-on-hover:active {
+  color: #000
+}
+
+.glow-on-hover:active:after {
+  background: transparent;
+}
+
+.glow-on-hover:hover:before {
+  opacity: 1;
+}
+
+.glow-on-hover:after {
+  z-index: -1;
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #111;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+}
+
+@keyframes glowing {
+  0% { background-position: 0 0; }
+  50% { background-position: 400% 0; }
+  100% { background-position: 0 0; }
+}
+
+/* https://dev.to/webdeasy/top-20-css-buttons-animations-f41 */
 
 
