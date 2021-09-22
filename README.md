@@ -19,22 +19,16 @@
 
 ## App instruction:
 
-1. In terminal:
- ```python
+1. Run the following line in terminal:
+ 
 git clone git@github.com:csc4350-f21/project1-cle31.git
-```
 
-2. ```python
-git install requests
-```
+2. git install requests
 
-3. ```python
-git install Flask
-```
+3. git install Flask
 
-4. ```python
-git install python-dotenv
-```
+4. git install python-dotenv
+
 5. Create .env to store APIs key.
 
 6. Sign up Spotify dev and Genius to key access token to APIs.
