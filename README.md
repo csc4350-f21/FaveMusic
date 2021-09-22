@@ -21,7 +21,7 @@
 
 1. Run the following line in terminal:
  
-git clone git@github.com:csc4350-f21/project1-cle31.git
+   git clone git@github.com:csc4350-f21/project1-cle31.git
 
 2. git install requests
 
@@ -44,7 +44,7 @@ git clone git@github.com:csc4350-f21/project1-cle31.git
 
 - The was sometime the page would get error for out of range index and I still don't know why. 
 
-##c. What would you do to improve your project in the future? 
+## c. What would you do to improve your project in the future? 
 
 - I would implement it to have more user-interacting such as getting user input and giving recommendations based on user's input.
 - A full-list of artist's top tracks.
