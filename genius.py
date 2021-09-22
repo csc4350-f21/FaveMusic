@@ -28,5 +28,10 @@ def lyrics_link(access_token, titletrack, artist_name):
 
     r = requests.get(base_url, params=params, headers=headers)
     d = r.json()
-    return d['response']['hits'][0]['result']['url']
+    try:
+
+        return d['response']['hits'][0]['result']['url']
+        
+    except KeyError:
+      print("Couldn't fetch data!")  
     

@@ -22,7 +22,11 @@ def get_access_token(client_id, client_secret):
 
     access_token = auth_response_data['access_token']
 
-    return access_token
+    try:
+
+      return access_token
+    except KeyError:
+      print("Couldn't generate access_token!")  
 
 def artist_info(token, artist_id):
 
@@ -66,8 +70,8 @@ def get_top_tracks(token, artist_id):
       trackpic.append(track['album']['images'][1]['url'])
       songpreview.append(track['preview_url'])
     
-      
-    return tracktitle,trackpic,songpreview
+    try:
 
-def get_track_info(token):
-  pass
+      return tracktitle,trackpic,songpreview
+    except KeyError:
+      print("Couldn't fetch data!")  

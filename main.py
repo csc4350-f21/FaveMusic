@@ -13,8 +13,7 @@ def main():
     token = spotify.get_access_token('CLIENT_ID', 'CLIENT_SECRET') #spotify token
 
 
-    artist_id = random.choice(["06HL4z0CvFAxyc27GXpf02","6qqNVTkY8uBg9cP3Jd7DAH","66CXWjxzNUsdJxJ2JdwvnR","7n2wHs1TKAczGzO7Dd2rGr","163tK9Wjr9P9DmM0AVK7lm","6M2wZ9GZgrQXHCFfjv46we","0C8ZW7ezQVs4URX5aX7Kqx"]) #get random artist id to fetch
-
+    artist_id = random.choice(["06HL4z0CvFAxyc27GXpf02","6qqNVTkY8uBg9cP3Jd7DAH","66CXWjxzNUsdJxJ2JdwvnR","7n2wHs1TKAczGzO7Dd2rGr","163tK9Wjr9P9DmM0AVK7lm","6M2wZ9GZgrQXHCFfjv46we","0C8ZW7ezQVs4URX5aX7Kqx","26VFTg2z8YR0cCuwLzESi2","1Xyo4u8uXC1ZmMpatF05PJ","5dfZ5uSmzR7VQK0udbAVpf","2aQnC3DbZB9GbauvhAw7ve"]) #get random artist id to fetch
     
 
     toptrack = spotify.get_top_tracks(token, artist_id)
