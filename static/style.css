@@ -1,10 +1,11 @@
 @import url(https://fonts.googleapis.com/css?family=Audiowide&effect=fire);
 body {
     font-family: "Audiowide", sans-serif;
-    background-image:url('bg2.jpg');
+    
     background-repeat: no-repeat;
     background-size: 100% 100%;
     text-align: center;
+    background-color: #7a00ff;
 }
 
 h1 {
