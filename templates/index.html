@@ -1,43 +1,10 @@
-<!-- templates/index.html -->
-<html>
-<head>  
-    <link rel="stylesheet" href="/static/style.css">
-</head>  
-<body>    
-<h1>Favorite Artist's Top Track</h1>  
+{% extends "base.html" %}
 
-<details>
-<summary>
-<p1 class="glow-on-hover">{{artist_name}}</p1>
-</summary>
-<div class="nav">   
-      <div class="inner">
-        <a href='{{lyrics_url}}' target="_blank" class="font-effect-fire">{{tracktitle}}</a>
-
-        <img src={{trackpic}}>
-
-        <audio
-          controls
-          src={{songpreview}}>
-              Your browser does not support the
-              <code>audio</code> element.
-        </audio>
-      </div>
-
-</div>  
-</details>
-<!-- <details>
-  <summary>
-    What is the meaning of life?
-    <span class="icon">👇</span>
-  </summary>
-  <p>
-    42
-  </p>
-</details> -->
-
-
-
-
-</body>
-</html>
+{% block content %}
+<h1 class="title">
+    Flask Login Example
+</h1>
+<h2 class="subtitle">
+    Easy authentication and authorization in Flask.
+</h2>
+{% endblock %}
