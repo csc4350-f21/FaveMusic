@@ -3,11 +3,23 @@
 
 <head>
   <link rel="stylesheet" href="/static/style.css">
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" /> -->
 </head>
 
 <body>
   <h1>Favorite Artist's Top Track</h1>
+  {% if test == 1 %}
+  <div>
+    <p1>Please save your favorite artist's ID below!</p1>
+  </div>
+  <form method="POST" action="/music1">
+    <div>
+      <input type="text" name="get_id" placeholder="ID" autofocus="">
+      <button>CLICK</button>
+    </div>
+  </form>
 
+  {% else %}
   <details>
     <summary>
       <p1 class="glow-on-hover">{{artist_name}}</p1>
@@ -26,19 +38,7 @@
 
     </div>
   </details>
-  <!-- <details>
-  <summary>
-    What is the meaning of life?
-    <span class="icon">👇</span>
-  </summary>
-  <p>
-    42
-  </p>
-</details> -->
-
-
-
-
+  {% endif %}
 </body>
 
 </html>
