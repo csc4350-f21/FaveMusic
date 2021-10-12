@@ -74,4 +74,26 @@ def get_top_tracks(token, artist_id):
 
             return tracktitle, trackpic, songpreview
         except KeyError:
-            print("Couldn't fetch data!")
+            return "Couldn't fetch data!"
+
+
+def search_id(token, artist_name):
+
+    search_input = artist_name.replace(" ", "%20")
+
+    BASE_URL = f"https://api.spotify.com/v1/search?q={search_input}&type=artist&market=US&limit=1"
+
+    headers = {"Authorization": "Bearer {token}".format(token=token)}
+
+    r = requests.get(BASE_URL, headers=headers)
+    d = r.json()
+
+    if "error" in d:
+        return KeyError
+
+    artist_id = d["artists"]["items"][0]["id"]
+
+    try:
+        return artist_id
+    except KeyError:
+        return "Couldn't fetch data!"

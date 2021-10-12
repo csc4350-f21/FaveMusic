@@ -28,5 +28,5 @@ def lyrics_link(access_token, titletrack, artist_name):
 
         return d["response"]["hits"][0]["result"]["url"]
 
-    except KeyError:
-        print("Couldn't fetch data!")
+    except KeyError or IndexError:
+        return "No lyrics link to be found!"

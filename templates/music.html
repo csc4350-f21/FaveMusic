@@ -21,8 +21,8 @@
   {% endwith %}
   <form method="POST" action="/musicadd">
     <div>
-      <input type="text" name="get_id" placeholder="ID" autofocus="">
-      <button>CLICK</button>
+      <input type="text" name="get_name" placeholder="Enter Name" autofocus="">
+      <button>Search n Save</button>
     </div>
   </form>
 
@@ -39,28 +39,47 @@
   {% endwith %}
   <form method="POST" action="/musicadd">
     <div>
-      <input type="text" name="get_id" placeholder="ID" autofocus="">
-      <button>CLICK</button>
+      <input type="text" name="get_name" placeholder="Enter Name" autofocus="">
+      <button>Search n Save</button>
     </div>
   </form>
-  <details>
-    <summary>
-      <p1 class="glow-on-hover">{{artist_name}}</p1>
-    </summary>
-    <div class="nav">
-      <div class="inner">
-        <a href='{{lyrics_url}}' target="_blank" class="font-effect-fire">{{tracktitle}}</a>
-
-        <img src={{trackpic}}>
-
-        <audio controls src={{songpreview}}>
-          Your browser does not support the
-          <code>audio</code> element.
-        </audio>
-      </div>
-
+  <form method="POST" action="/musicdelete">
+    <div>
+      <input type="text" name="delete_id" placeholder="Enter ID to remove" autofocus="">
+      <button>Remove</button>
     </div>
-  </details>
+  </form>
+  <div align="left">
+    <p2 style='text-align:center'>Your saved artists</p2>
+    <nav>
+      <ol>
+
+        {%for i in range(0, len)%}
+        <li style="color:blue;">{{artistname_list[i]}} - {{artistid_list[i]}}</li>
+        {%endfor%}
+
+      </ol>
+    </nav>
+  </div>
+  <div>
+    <details>
+      <summary>
+        <p1 class="glow-on-hover">{{artist_name}}</p1>
+      </summary>
+      <div class="nav">
+        <div class="inner">
+          <a href='{{lyrics_url}}' target="_blank" class="font-effect-fire">{{tracktitle}}</a>
+
+          <img src={{trackpic}}>
+
+          <audio controls src={{songpreview}}>
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+        </div>
+      </div>
+    </details>
+  </div>
   {% endif %}
 </body>
 

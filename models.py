@@ -17,3 +17,4 @@ class User(UserMixin, db.Model):
 class ArtistID(UserMixin, db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     artistid = db.Column(db.String(100), unique=True, nullable=False, primary_key=True)
+    artistname = db.Column(db.String(100), nullable=False)
