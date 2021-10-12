@@ -10,29 +10,41 @@ from . import db
 music = Blueprint("music", __name__)
 
 
-@music.route("/music")
+@music.route("/new")
 @login_required
 def toptrack():
-    test = 1
-    if test == 1:
-        return render_template("music.html", test=test)
+    idcheck = ArtistID.query.filter_by(user_id=current_user.id).first()
+
+    if idcheck is None:
+        return render_template("music.html", idcheck=idcheck)
     else:
-        return redirect(url_for("music.toptrack_post"))
+        return redirect(url_for("music.user_page"))
 
 
-@music.route("/music1", methods=["GET", "POST"])
+@music.route("/musicadd", methods=["GET", "POST"])
 @login_required
 def toptrack_post():
+    token = spotify.get_access_token("CLIENT_ID", "CLIENT_SECRET")  # spotify token
     get_id = request.form.get("get_id")
 
-    new_artist = ArtistID(id=current_user.id, artistid=get_id)
+    # If user enter invalid ID
+    if spotify.get_top_tracks(token, get_id) == KeyError:
+        flash("Invalid ID")
+        return redirect(url_for("music.toptrack"))
 
-    # add the new user to the database
+    new_artist = ArtistID(user_id=current_user.id, artistid=get_id)
+
+    # add the new aritst id to the database
     db.session.add(new_artist)
     db.session.commit()
 
-    token = spotify.get_access_token("CLIENT_ID", "CLIENT_SECRET")  # spotify token
+    return redirect(url_for("music.user_page"))
 
+
+@music.route("/home")
+@login_required
+def user_page():
+    token = spotify.get_access_token("CLIENT_ID", "CLIENT_SECRET")  # spotify token
     # artist_id = random.choice(
     #     [
     #         "06HL4z0CvFAxyc27GXpf02",
@@ -45,10 +57,14 @@ def toptrack_post():
     #         "26VFTg2z8YR0cCuwLzESi2",
     #         "1Xyo4u8uXC1ZmMpatF05PJ",
     #         "5dfZ5uSmzR7VQK0udbAVpf",
-    #         "2aQnC3DbZB9GbauvhAw7ve",
     #     ]
     # )  # get random artist id to fetch
-    artist_id = "2aQnC3DbZB9GbauvhAw7ve"
+
+    artistid_list = []
+    user_data = ArtistID.query.filter_by(user_id=current_user.id).all()
+    for ids in user_data:
+        artistid_list.append(ids.artistid)
+    artist_id = random.choice(artistid_list)
 
     toptrack = spotify.get_top_tracks(token, artist_id)
 

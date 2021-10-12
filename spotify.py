@@ -60,14 +60,18 @@ def get_top_tracks(token, artist_id):
     trackpic = []
     songpreview = []
 
-    for track in d["tracks"]:
+    if "error" in d:
+        return KeyError
+    else:
 
-        tracktitle.append(track["name"])
-        trackpic.append(track["album"]["images"][1]["url"])
-        songpreview.append(track["preview_url"])
+        for track in d["tracks"]:
 
-    try:
+            tracktitle.append(track["name"])
+            trackpic.append(track["album"]["images"][1]["url"])
+            songpreview.append(track["preview_url"])
 
-        return tracktitle, trackpic, songpreview
-    except KeyError:
-        print("Couldn't fetch data!")
+        try:
+
+            return tracktitle, trackpic, songpreview
+        except KeyError:
+            print("Couldn't fetch data!")

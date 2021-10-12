@@ -8,11 +8,18 @@
 
 <body>
   <h1>Favorite Artist's Top Track</h1>
-  {% if test == 1 %}
+  {% if idcheck == None %}
   <div>
     <p1>Please save your favorite artist's ID below!</p1>
   </div>
-  <form method="POST" action="/music1">
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <div>
+    {{ messages[0] }}
+  </div>
+  {% endif %}
+  {% endwith %}
+  <form method="POST" action="/musicadd">
     <div>
       <input type="text" name="get_id" placeholder="ID" autofocus="">
       <button>CLICK</button>
@@ -20,6 +27,22 @@
   </form>
 
   {% else %}
+  <div>
+    <p1>Please save your favorite artist's ID below!</p1>
+  </div>
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <div>
+    {{ messages[0] }}
+  </div>
+  {% endif %}
+  {% endwith %}
+  <form method="POST" action="/musicadd">
+    <div>
+      <input type="text" name="get_id" placeholder="ID" autofocus="">
+      <button>CLICK</button>
+    </div>
+  </form>
   <details>
     <summary>
       <p1 class="glow-on-hover">{{artist_name}}</p1>
