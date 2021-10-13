@@ -1,3 +1,1 @@
-web: flask run
-web: export FLASK_DEBUG=1
-web: export FLASK_APP=__init__.py
+web: gunicorn -w 4 -b "0.0.0.0:$PORT" __init__.py:app

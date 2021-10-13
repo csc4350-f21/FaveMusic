@@ -1,3 +1,7 @@
 Flask
 python-dotenv
 requests
+werkzeug.security
+flask_login
+flask_sqlalchemy
+gunicorn
