@@ -44,7 +44,7 @@
     <nav>
       <ol>
         {%for i in range(0, len)%}
-        <li style="color:blue;">{{artistname_list[i]}} - {{artistid_list[i]}}</li>
+        <li style="color:blue;">{{artistname_list[i]}}</li>
         {%endfor%}
       </ol>
     </nav>
@@ -79,14 +79,14 @@
     {% endif %}
     {% endwith %}
     <form method="POST" action="/musicadd">
-      <div class="save">
+      <div>
         <input type="text" name="get_name" placeholder="Enter Name" autofocus="">
         <button>Search n Save</button>
       </div>
     </form>
     <form method="POST" action="/musicdelete">
-      <div class="delete">
-        <input type="text" name="delete_id" placeholder="Enter ID to remove" autofocus="">
+      <div>
+        <input type="text" name="delete_name" placeholder="Enter name to remove" autofocus="">
         <button>Remove</button>
       </div>
     </form>

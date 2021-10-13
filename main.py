@@ -10,10 +10,11 @@ from flask_login import (
     LoginManager,
     current_user,
 )
+
 import spotify
 import random
 import genius
-from sqlalchemy import exc, insert
+from sqlalchemy import exc
 
 load_dotenv(find_dotenv())
 
@@ -25,6 +26,8 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 #   Gets rid of a warning
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SQLALCHEMY_POOL_SIZE"] = 20
+app.config["SQLALCHEMY_POOL_TIMEOUT"] = 300
 
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy(app)
@@ -154,37 +157,30 @@ def toptrack_post():
 
     artist_name = spotify.artist_info(token, get_id)
 
-    # new_artist = models.ArtistID(
-    #     user_id=current_user.id, artistid=get_id, artistname=artist_name
-    # )
+    new_artist = models.ArtistID(
+        user_id=current_user.id,
+        artistid=get_id + "-" + str(current_user.id),
+        artistname=artist_name,
+    )
 
     # add the new aritst id to the database
-    # db.session.add(new_artist)
-    # try:
-    #     db.session.commit()
-    #     return redirect(url_for("user_page"))
-    # except exc.SQLAlchemyError:
-    #     flash(artist_name + " already exists. Try something else.")
-    #     return redirect(url_for("toptrack"))
-
-    # db.session.commit()
-    db.session.execute(
-        insert(
-            models.ArtistID,
-            values=(current_user.id, get_id, artist_name),
-            prefixes=["OR IGNORE"],
-        )
-    )
-    return redirect(url_for("toptrack"))
+    db.session.add(new_artist)
+    try:
+        db.session.commit()
+        return redirect(url_for("user_page"))
+    except exc.SQLAlchemyError:
+        flash(artist_name + " already exists. Try something else.")
+        return redirect(url_for("toptrack"))
 
 
 @app.route("/musicdelete", methods=["GET", "POST"])
 @login_required
 def music_delete():
 
-    delete_id = request.form.get("delete_id")
-    models.ArtistID.query.filter_by(artistid=delete_id).delete()
-    models.ArtistID.query.filter_by(artistname=delete_id).delete()
+    delete_name = request.form.get("delete_name")
+    db.session.query(models.ArtistID).filter_by(
+        user_id=current_user.id, artistname=delete_name
+    ).delete()
     db.session.commit()
 
     return redirect(url_for("toptrack"))
@@ -200,7 +196,8 @@ def user_page():
     user_data = models.ArtistID.query.filter_by(user_id=current_user.id).all()
 
     for data in user_data:
-        artistid_list.append(data.artistid)
+        dataid = data.artistid.replace("-" + str(current_user.id), "")
+        artistid_list.append(dataid)
         artistname_list.append(data.artistname)
 
     if "get_id" in globals():
@@ -234,7 +231,6 @@ def user_page():
         "music.html",
         name=current_user.name,
         len=len(artistid_list),
-        artistid_list=artistid_list,
         artistname_list=artistname_list,
         tracktitle=tracktitle,
         trackpic=trackpic,
