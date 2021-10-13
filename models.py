@@ -1,7 +1,5 @@
 from flask_login import UserMixin
-from . import db
-
-# from sqlalchemy import ForeignKey
+from main import db
 
 
 class User(UserMixin, db.Model):
@@ -16,5 +14,5 @@ class User(UserMixin, db.Model):
 
 class ArtistID(UserMixin, db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    artistid = db.Column(db.String(100), unique=True, nullable=False, primary_key=True)
+    artistid = db.Column(db.String(100), nullable=False, unique=False, primary_key=True)
     artistname = db.Column(db.String(100), nullable=False)
