@@ -1,7 +1,8 @@
 Flask
 python-dotenv
 requests
-werkzeug.security
+Werkzeug
+psycopg2
 flask_login
 flask_sqlalchemy
 gunicorn
