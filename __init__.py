@@ -48,3 +48,9 @@ app.register_blueprint(main_blueprint)
 from .music import music as music_blueprint
 
 app.register_blueprint(music_blueprint)
+
+if __name__ == "__main__":
+
+    app.run(
+        host=os.getenv("IP", "0.0.0.0"), port=int(os.getenv("PORT", 8080)), debug=True
+    )
