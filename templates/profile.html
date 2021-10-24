@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="title">
+    Welcome, {{ name }}!
+</h1>
+{% if count == 0 %}
+<h2 class="subtitle">
+    You haven't saved any artists yet. Head to your homepage to save!
+</h2>
+{% else %}
+<h2 class="subtitle">
+    You have {{count}} artist(s) right now. Keep going!
+</h2>
+{% endif %}
+{% endblock %}

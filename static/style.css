@@ -36,8 +36,8 @@
     transform: rotate(360deg);
   }
 } */
-@import url(https://fonts.googleapis.com/css2?family=Pacifico&display=swap);
-@import url(https://fonts.googleapis.com/css?family=Rancho&effect=fire-animation);
+@import url(https://fonts.googleapis.com/css?family=Audiowide&effect=fire);
+@import url(https://fonts.googleapis.com/css2?family=Pacifico&display=swap&effect=fire);
 body {
     /* font-family: "Audiowide", sans-serif; */
     /* background-image:url('bg2.jpg'); */
@@ -55,8 +55,8 @@ body {
 
 .button {
   display: inline-block;
-  margin: 20px;
-  color: #E63946;
+  padding: 10px;
+  color: #1D3557;
   
 }
 
@@ -86,11 +86,6 @@ h1 {
 
 .list .list-item {
   color: #1D3557;
-}
-
-.list .list-item .remove-button {
-  margin-left:10px;
-  padding:1px;
 }
 
 details {
@@ -124,6 +119,7 @@ summary {
   height: 350px;
   margin-left : auto;
   margin-right: auto;
+  margin-top: 0%;
 
 }
 
@@ -141,7 +137,8 @@ summary {
     display:block;
     text-decoration: none;
     color:salmon;
-    margin-bottom: 3%;
+    padding: 0%;
+    margin-top: 3%;
     
 }
 
@@ -182,7 +179,7 @@ summary::-webkit-details-marker {
     border: none;
     outline: none;
     color: #353535;
-    background: #F1FAEE;
+    background: #FFFFFF;
     cursor: pointer;
     position: relative;
     z-index: 0;
@@ -191,7 +188,7 @@ summary::-webkit-details-marker {
 
 .glow-on-hover:before {
   content: '';
-  background: linear-gradient(45deg, #E63946, #F1FAEE, #A8DADC, #457B9D, #1D3557);
+  background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
   position: absolute;
   top: -2px;
   left:-2px;

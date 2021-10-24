@@ -1,1 +1,7 @@
 Flask
+python-dotenv
+requests
+Werkzeug
+psycopg2
+flask_login
+flask_sqlalchemy
