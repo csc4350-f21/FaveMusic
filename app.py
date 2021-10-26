@@ -34,7 +34,7 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 #   Gets rid of a warning
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_POOL_SIZE"] = 100
+app.config["SQLALCHEMY_POOL_SIZE"] = 300
 app.config["SQLALCHEMY_POOL_TIMEOUT"] = 300
 
 # init SQLAlchemy so we can use it later in our models
