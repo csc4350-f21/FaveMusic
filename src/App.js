@@ -36,21 +36,41 @@ function App() {
   //   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(temp_artistlist))
   // }, [temp_artistlist])
 
-  function add_artist(e) {
+  function AddArtist(e) {
     const TempArtistName = NameRef.current.value;
     if (TempArtistName === '') return
     settemp_artistlist(prevtemp_artistlist => { return [...prevtemp_artistlist, { id: uuidv4(), name: TempArtistName }] });
     NameRef.current.value = null;
 
   }
+  function ClickToSave() {
+    let temp_artistlists = []
+    temp_artistlist.forEach(temp => {
+      temp_artistlists = [...temp_artistlists, temp.name]
+    });
+    const combinelist = [...artistlist, ...temp_artistlists];
 
-  function remove_artist(id) {
+    console.log(JSON.stringify({ "combinelist": combinelist }));
+    fetch('/artistsave', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ "combineartistlist": combinelist }),
+    }).then(response => response.json()).then(data => {
+      console.log(JSON.stringify(data))
+      setartistlist(data.finalartistlist);
+      settemp_artistlist([]);
+    });
+  }
+
+  function RemoveArtist(id) {
     const newtemp_artistlist = [...temp_artistlist];
     const newtemp = newtemp_artistlist.filter(newtemp => newtemp.id !== id);
     settemp_artistlist(newtemp);
   }
 
-  function remove_artistmain(name) {
+  function RemoveArtistMain(name) {
     const newartistname = artistlist.filter(newartistname => newartistname !== name);
     console.log(artistlist)
     setartistlist(newartistname);
@@ -65,7 +85,7 @@ function App() {
     const list = artistlist.map((showartistname) => {
       return (<div>
         <li style={{ color: 'blue' }} key={uuidv4()}>{showartistname}</li>
-        <button onClick={() => remove_artistmain(showartistname)}>x</button>
+        <button onClick={() => RemoveArtistMain(showartistname)}>x</button>
 
       </div>)
     }
@@ -86,7 +106,7 @@ function App() {
     const list = temp_artistlist.map((showartistname) => {
       return (<div>
         <li style={{ color: 'red' }} key={showartistname.id}>{showartistname.name}</li>
-        <button onClick={() => remove_artist(showartistname.id)}>x</button>
+        <button onClick={() => RemoveArtist(showartistname.id)}>x</button>
       </div>)
     }
     )
@@ -206,7 +226,8 @@ function App() {
             <label>
               <div>
                 <input type="text" ref={NameRef} placeholder="Enter Name" />
-                <button onClick={add_artist}>Add</button>
+                <button onClick={AddArtist}>Add</button>
+                <button onClick={ClickToSave}>Save</button>
               </div>
             </label>
           </div>

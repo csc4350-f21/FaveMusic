@@ -1,7 +1,18 @@
 from flask_sqlalchemy import SQLAlchemy
 import os
 from dotenv import find_dotenv, load_dotenv
-from flask import Flask, render_template, redirect, url_for, request, flash, Blueprint
+from flask import (
+    Flask,
+    render_template,
+    redirect,
+    url_for,
+    request,
+    flash,
+    Blueprint,
+    jsonify,
+)
+import flask
+
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import (
     login_user,
@@ -64,60 +75,65 @@ def index():
 
     if nonecheck is None:
         nonecheck = True
+        DATA = {
+            "nonecheck": nonecheck,
+        }
+        data = json.dumps(DATA)
+        return render_template("index.html", data=data,)
     else:
         nonecheck = False
-    print(nonecheck, file=sys.stderr)
-    token = spotify.get_access_token("CLIENT_ID", "CLIENT_SECRET")  # spotify token
+        print(nonecheck, file=sys.stderr)
+        token = spotify.get_access_token("CLIENT_ID", "CLIENT_SECRET")  # spotify token
 
-    artistid_list = []
-    artistname_list = []
-    user_data = models.ArtistID.query.filter_by(user_id=current_user.id).all()
+        artistid_list = []
+        artistname_list = []
+        user_data = models.ArtistID.query.filter_by(user_id=current_user.id).all()
 
-    for data in user_data:
-        dataid = data.artistid.replace("-" + str(current_user.id), "")
-        artistid_list.append(dataid)
-        artistname_list.append(data.artistname)
+        for data in user_data:
+            dataid = data.artistid.replace("-" + str(current_user.id), "")
+            artistid_list.append(dataid)
+            artistname_list.append(data.artistname)
 
-    if "get_id" in globals():
-        if get_id == "":
-            artist_id = random.choice(artistid_list)
+        if "get_id" in globals():
+            if get_id == "" or get_id is None:
+                artist_id = random.choice(artistid_list)
+            else:
+                artist_id = get_id
+                del globals()["get_id"]
         else:
-            artist_id = get_id
-            del globals()["get_id"]
-    else:
-        artist_id = random.choice(artistid_list)
+            artist_id = random.choice(artistid_list)
 
-    title, pic, preview = spotify.get_top_tracks(token, artist_id)
+        title, pic, preview = spotify.get_top_tracks(token, artist_id)
 
-    tracktitle = random.choice(
-        title
-    )  # get random tracktitle from tracktitle list at index 0 from get_top_tracks return values
-    index = title.index(tracktitle)  # get index of that random track
-    trackpic = pic[
-        index
-    ]  # get image of that random track at the same index from trackpic list
-    artist_name = spotify.artist_info(
-        token, artist_id
-    )  # get artist's name from artist_info function of spotify.py
-    songpreview = preview[index]  # get song preview link from songpreview list
+        tracktitle = random.choice(
+            title
+        )  # get random tracktitle from tracktitle list at index 0 from get_top_tracks return values
+        index = title.index(tracktitle)  # get index of that random track
+        trackpic = pic[
+            index
+        ]  # get image of that random track at the same index from trackpic list
+        artist_name = spotify.artist_info(
+            token, artist_id
+        )  # get artist's name from artist_info function of spotify.py
+        songpreview = preview[index]  # get song preview link from songpreview list
 
-    lyrics_url = genius.lyrics_link(
-        "GENIUS_TOKEN", tracktitle, artist_name
-    )  # genius return lyrics link
+        lyrics_url = genius.lyrics_link(
+            "GENIUS_TOKEN", tracktitle, artist_name
+        )  # genius return lyrics link
 
-    DATA = {
-        "nonecheck": nonecheck,
-        "username": current_user.name,
-        "len": len(artistid_list),
-        "artistname_list": artistname_list,
-        "tracktitle": tracktitle,
-        "trackpic": trackpic,
-        "artist_name": artist_name,
-        "songpreview": songpreview,
-        "lyrics_url": lyrics_url,
-    }
-    data = json.dumps(DATA)
-    return render_template("index.html", data=data,)
+        DATA = {
+            "nonecheck": nonecheck,
+            "username": current_user.name,
+            "len": len(artistid_list),
+            "artistname_list": artistname_list,
+            "tracktitle": tracktitle,
+            "trackpic": trackpic,
+            "artist_name": artist_name,
+            "songpreview": songpreview,
+            "lyrics_url": lyrics_url,
+        }
+        data = json.dumps(DATA)
+        return render_template("index.html", data=data)
 
 
 app.register_blueprint(bp)
@@ -198,6 +214,44 @@ def index():
     return redirect(url_for("bp.index"))
 
 
+get_id = ""
+
+
+@app.route("/artistsave", methods=["POST"])
+def artistsave():
+    token = spotify.get_access_token("CLIENT_ID", "CLIENT_SECRET")  # spotify token
+    combineartistlist = flask.request.json.get("combineartistlist")
+    print(combineartistlist, file=sys.stderr)
+
+    db.session.query(models.ArtistID).filter_by(user_id=current_user.id).delete()
+    db.session.commit()
+    global get_id
+    for addname in combineartistlist:
+        # global get_id
+        get_id = spotify.search_id(token, addname)
+        if get_id is None:
+            continue
+        artist_name = spotify.artist_info(token, get_id)
+
+        new_artist = models.ArtistID(
+            user_id=current_user.id,
+            artistid=get_id + "-" + str(current_user.id),
+            artistname=artist_name,
+        )
+        # add the new aritst id to the database
+        db.session.add(new_artist)
+        try:
+            db.session.commit()
+        except exc.SQLAlchemyError:
+            continue
+    artistname_list = []
+    user_data = models.ArtistID.query.filter_by(user_id=current_user.id).all()
+    for data in user_data:
+        artistname_list.append(data.artistname)
+
+    return jsonify({"finalartistlist": artistname_list})
+
+
 @app.route("/profile")
 @login_required
 def profile():
@@ -205,120 +259,66 @@ def profile():
     return render_template("profile.html", name=current_user.name, count=id_count)
 
 
-@app.route("/new")
-@login_required
-def toptrack():
-    idcheck = models.ArtistID.query.filter_by(user_id=current_user.id).first()
+# @app.route("/new")
+# @login_required
+# def toptrack():
+#     idcheck = models.ArtistID.query.filter_by(user_id=current_user.id).first()
 
-    if idcheck is None:
-        return render_template("music.html", idcheck=idcheck, name=current_user.name)
-    else:
-        return redirect(url_for("user_page"))
-
-
-get_id = ""
+#     if idcheck is None:
+#         return render_template("music.html", idcheck=idcheck, name=current_user.name)
+#     else:
+#         return redirect(url_for("user_page"))
 
 
-@app.route("/musicadd", methods=["GET", "POST"])
-@login_required
-def toptrack_post():
-    token = spotify.get_access_token("CLIENT_ID", "CLIENT_SECRET")  # spotify token
-    get_name = request.form.get("get_name")
-
-    # If user enter null
-    if not get_name:
-        flash("Name can't be null")
-        return redirect(url_for("toptrack"))
-
-    # global get_id
-    global get_id
-    get_id = spotify.search_id(token, get_name)
-    if get_id is None:
-        return redirect(url_for("toptrack"))
-
-    artist_name = spotify.artist_info(token, get_id)
-
-    new_artist = models.ArtistID(
-        user_id=current_user.id,
-        artistid=get_id + "-" + str(current_user.id),
-        artistname=artist_name,
-    )
-
-    # add the new aritst id to the database
-    db.session.add(new_artist)
-    try:
-        db.session.commit()
-        return redirect(url_for("user_page"))
-    except exc.SQLAlchemyError:
-        flash(artist_name + " already exists. Try something else.")
-        return redirect(url_for("toptrack"))
+# get_id = ""
 
 
-@app.route("/musicdelete", methods=["GET", "POST"])
-@login_required
-def music_delete():
+# @app.route("/musicadd", methods=["GET", "POST"])
+# @login_required
+# def toptrack_post():
+#     token = spotify.get_access_token("CLIENT_ID", "CLIENT_SECRET")  # spotify token
+#     get_name = request.form.get("get_name")
 
-    delete_name = request.form.get("delete_name")
-    db.session.query(models.ArtistID).filter_by(
-        user_id=current_user.id, artistname=delete_name
-    ).delete()
-    db.session.commit()
+#     # If user enter null
+#     if not get_name:
+#         flash("Name can't be null")
+#         return redirect(url_for("toptrack"))
 
-    return redirect(url_for("toptrack"))
+#     # global get_id
+#     # global get_id
+#     get_id = spotify.search_id(token, get_name)
+#     if get_id is None:
+#         return redirect(url_for("toptrack"))
+
+#     artist_name = spotify.artist_info(token, get_id)
+
+#     new_artist = models.ArtistID(
+#         user_id=current_user.id,
+#         artistid=get_id + "-" + str(current_user.id),
+#         artistname=artist_name,
+#     )
+
+#     # add the new aritst id to the database
+#     db.session.add(new_artist)
+#     try:
+#         db.session.commit()
+#         return redirect(url_for("user_page"))
+#     except exc.SQLAlchemyError:
+#         flash(artist_name + " already exists. Try something else.")
+#         return redirect(url_for("toptrack"))
 
 
-@app.route("/home")
-@login_required
-def user_page():
-    token = spotify.get_access_token("CLIENT_ID", "CLIENT_SECRET")  # spotify token
+# @app.route("/musicdelete", methods=["GET", "POST"])
+# @login_required
+# def music_delete():
 
-    artistid_list = []
-    artistname_list = []
-    user_data = models.ArtistID.query.filter_by(user_id=current_user.id).all()
+#     delete_name = request.form.get("delete_name")
+#     db.session.query(models.ArtistID).filter_by(
+#         user_id=current_user.id, artistname=delete_name
+#     ).delete()
+#     db.session.commit()
 
-    for data in user_data:
-        dataid = data.artistid.replace("-" + str(current_user.id), "")
-        artistid_list.append(dataid)
-        artistname_list.append(data.artistname)
-
-    if "get_id" in globals():
-        if get_id == "" or get_id is None:
-            artist_id = random.choice(artistid_list)
-        else:
-            artist_id = get_id
-            del globals()["get_id"]
-    else:
-        artist_id = random.choice(artistid_list)
-
-    title, pic, preview = spotify.get_top_tracks(token, artist_id)
-
-    tracktitle = random.choice(
-        title
-    )  # get random tracktitle from tracktitle list at index 0 from get_top_tracks return values
-    index = title.index(tracktitle)  # get index of that random track
-    trackpic = pic[
-        index
-    ]  # get image of that random track at the same index from trackpic list
-    artist_name = spotify.artist_info(
-        token, artist_id
-    )  # get artist's name from artist_info function of spotify.py
-    songpreview = preview[index]  # get song preview link from songpreview list
-
-    lyrics_url = genius.lyrics_link(
-        "GENIUS_TOKEN", tracktitle, artist_name
-    )  # genius return lyrics link
-
-    return render_template(
-        "music.html",
-        name=current_user.name,
-        len=len(artistid_list),
-        artistname_list=artistname_list,
-        tracktitle=tracktitle,
-        trackpic=trackpic,
-        artist_name=artist_name,
-        songpreview=songpreview,
-        lyrics_url=lyrics_url,
-    )
+#     return redirect(url_for("toptrack"))
 
 
 if __name__ == "__main__":
