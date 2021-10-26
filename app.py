@@ -77,6 +77,7 @@ def index():
         nonecheck = True
         DATA = {
             "nonecheck": nonecheck,
+            "username": current_user.name,
         }
         data = json.dumps(DATA)
         return render_template("index.html", data=data,)
@@ -209,9 +210,8 @@ def logout():
 
 
 @app.route("/")
-def index():
-    # return render_template("index.html")
-    return redirect(url_for("bp.index"))
+def home():
+    return render_template("main.html")
 
 
 get_id = ""
@@ -257,68 +257,6 @@ def artistsave():
 def profile():
     id_count = models.ArtistID.query.filter_by(user_id=current_user.id).count()
     return render_template("profile.html", name=current_user.name, count=id_count)
-
-
-# @app.route("/new")
-# @login_required
-# def toptrack():
-#     idcheck = models.ArtistID.query.filter_by(user_id=current_user.id).first()
-
-#     if idcheck is None:
-#         return render_template("music.html", idcheck=idcheck, name=current_user.name)
-#     else:
-#         return redirect(url_for("user_page"))
-
-
-# get_id = ""
-
-
-# @app.route("/musicadd", methods=["GET", "POST"])
-# @login_required
-# def toptrack_post():
-#     token = spotify.get_access_token("CLIENT_ID", "CLIENT_SECRET")  # spotify token
-#     get_name = request.form.get("get_name")
-
-#     # If user enter null
-#     if not get_name:
-#         flash("Name can't be null")
-#         return redirect(url_for("toptrack"))
-
-#     # global get_id
-#     # global get_id
-#     get_id = spotify.search_id(token, get_name)
-#     if get_id is None:
-#         return redirect(url_for("toptrack"))
-
-#     artist_name = spotify.artist_info(token, get_id)
-
-#     new_artist = models.ArtistID(
-#         user_id=current_user.id,
-#         artistid=get_id + "-" + str(current_user.id),
-#         artistname=artist_name,
-#     )
-
-#     # add the new aritst id to the database
-#     db.session.add(new_artist)
-#     try:
-#         db.session.commit()
-#         return redirect(url_for("user_page"))
-#     except exc.SQLAlchemyError:
-#         flash(artist_name + " already exists. Try something else.")
-#         return redirect(url_for("toptrack"))
-
-
-# @app.route("/musicdelete", methods=["GET", "POST"])
-# @login_required
-# def music_delete():
-
-#     delete_name = request.form.get("delete_name")
-#     db.session.query(models.ArtistID).filter_by(
-#         user_id=current_user.id, artistname=delete_name
-#     ).delete()
-#     db.session.commit()
-
-#     return redirect(url_for("toptrack"))
 
 
 if __name__ == "__main__":

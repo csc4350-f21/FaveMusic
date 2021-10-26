@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 // const LOCAL_STORAGE_KEY = 'temp_artistlist'
@@ -12,29 +12,7 @@ function App() {
   const args = JSON.parse(document.getElementById("data").text);
   const [temp_artistlist, settemp_artistlist] = useState([]);
   const NameRef = useRef();
-  // const artistname = ["Ariana", "Taylor"];
   const [artistlist, setartistlist] = useState(args.artistname_list);
-  // const someValue = useRef(artistname)
-
-  // useEffect(() => {
-  //   const storedNames = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY2))
-  //   if (storedNames) setartistlist(storedNames)
-  // }, []);
-
-
-  // useEffect(() => {
-  //   localStorage.setItem(LOCAL_STORAGE_KEY2, JSON.stringify(artistlist))
-  // }, [artistlist])
-
-  // useEffect(() => {
-  //   const storedNames = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))
-  //   if (storedNames) settemp_artistlist(storedNames)
-  // }, []);
-
-
-  // useEffect(() => {
-  //   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(temp_artistlist))
-  // }, [temp_artistlist])
 
   function AddArtist(e) {
     const TempArtistName = NameRef.current.value;
@@ -48,7 +26,12 @@ function App() {
     temp_artistlist.forEach(temp => {
       temp_artistlists = [...temp_artistlists, temp.name]
     });
-    const combinelist = [...artistlist, ...temp_artistlists];
+    let combinelist = []
+    if (artistlist === undefined || artistlist.length == 0) {
+      combinelist = [...temp_artistlists];
+    } else {
+      combinelist = [...artistlist, ...temp_artistlists];
+    }
 
     console.log(JSON.stringify({ "combinelist": combinelist }));
     fetch('/artistsave', {
@@ -60,8 +43,9 @@ function App() {
     }).then(response => response.json()).then(data => {
       console.log(JSON.stringify(data))
       setartistlist(data.finalartistlist);
-      settemp_artistlist([]);
+
     });
+    settemp_artistlist([]);
   }
 
   function RemoveArtist(id) {
@@ -90,14 +74,6 @@ function App() {
       </div>)
     }
     )
-    // const list = someValue.current.map((showartistname) => {
-    //   return (<div>
-    //     <li key={uuidv4()}>{showartistname}</li>
-    //     <button onClick={() => remove_artistmain(showartistname)}>x</button>
-
-    //   </div>)
-    // }
-    // )
     return (<ol>{list} <ShowList /></ol>)
   }
 
@@ -112,7 +88,6 @@ function App() {
     )
     return (<>{list}</>)
   }
-
 
   return (
     <>
@@ -134,14 +109,18 @@ function App() {
         <>
           <div>
             <p1>Please save your favorite artist's ID below!</p1>
+            <label>
+              <div>
+                <input type="text" ref={NameRef} placeholder="Enter Name" />
+                <button onClick={AddArtist}>Add</button>
+                <button onClick={ClickToSave}>Save</button>
+                <ol>
+                  <ShowList />
+                </ol>
+              </div>
+            </label>
           </div>
 
-          <form method="POST" action="/musicadd">
-            <div>
-              <input type="text" name="get_name" placeholder="Enter Name" autofocus="" />
-              <button>Search n Save</button>
-            </div>
-          </form>
         </>
 
         :
@@ -152,37 +131,9 @@ function App() {
               <p2>Your saved artists</p2>
               <nav>
                 <ol class="list-item">
-
-                  {/* {args.artistname_list.map((name, index) => {
-                    return (
-                      <form method="POST" action="/musicdelete">
-                        <div>
-                          <li key={index}>{name}
-                            <button class="remove-button" name="delete_name" value={name}>x</button>
-                          </li>
-                        </div>
-                      </form>
-                    )
-                  })} */}
                   <ShowArtistList />
 
                 </ol>
-
-                {/* <div>
-                  <ol class="list-item">
-
-                    {temp_artistlist.map((artistname) => {
-                      return (
-                        <div>
-                          <li key={artistname.id}>{artistname.name}</li>
-                          <button class="remove-button" onClick={() => remove_artist(artistname.id)}>x</button>
-                        </div>
-                      )
-                    })}
-
-                  </ol>
-                </div> */}
-
               </nav>
             </div>
             <div class="artist">
@@ -208,21 +159,6 @@ function App() {
           </div>
           <div class="subtitle">
             <p1>Please save your favorite artist's ID below!</p1>
-
-            <form method="POST" action="/musicadd">
-              <div>
-                <input type="text" name="get_name" placeholder="Enter Name" autofocus="" />
-                <button>Search n Save</button>
-              </div>
-            </form>
-            <form method="POST" action="/musicdelete">
-              <div>
-                <input type="text" name="delete_name" placeholder="Enter name to remove" autofocus="" />
-                <button>Remove</button>
-              </div>
-            </form>
-
-
             <label>
               <div>
                 <input type="text" ref={NameRef} placeholder="Enter Name" />
