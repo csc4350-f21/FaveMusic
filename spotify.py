@@ -81,14 +81,10 @@ def search_id(token, artist_name):
     headers = {"Authorization": "Bearer {token}".format(token=token)}
 
     r = requests.get(BASE_URL, headers=headers)
-    d = r.json()
-
-    if "error" in d:
-        return KeyError
-
-    artist_id = d["artists"]["items"][0]["id"]
-
     try:
+        d = r.json()
+        artist_id = d["artists"]["items"][0]["id"]
+
         return artist_id
-    except KeyError:
-        return "Couldn't fetch data!"
+    except IndexError:
+        return None

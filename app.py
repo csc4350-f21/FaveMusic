@@ -233,6 +233,8 @@ def toptrack_post():
     # global get_id
     global get_id
     get_id = spotify.search_id(token, get_name)
+    if get_id is None:
+        return redirect(url_for("toptrack"))
 
     artist_name = spotify.artist_info(token, get_id)
 
@@ -280,7 +282,7 @@ def user_page():
         artistname_list.append(data.artistname)
 
     if "get_id" in globals():
-        if get_id == "":
+        if get_id == "" or get_id is None:
             artist_id = random.choice(artistid_list)
         else:
             artist_id = get_id
