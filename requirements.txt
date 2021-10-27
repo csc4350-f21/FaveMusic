@@ -5,3 +5,4 @@ Werkzeug
 psycopg2
 flask_login
 flask_sqlalchemy
+uuidv4
