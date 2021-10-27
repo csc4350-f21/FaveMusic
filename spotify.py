@@ -1,3 +1,4 @@
+"""Spotify"""
 import requests
 import os
 from dotenv import find_dotenv, load_dotenv
@@ -9,7 +10,7 @@ AUTH_URL = "https://accounts.spotify.com/api/token"
 
 
 def get_access_token(client_id, client_secret):
-
+    """Token"""
     auth_response = requests.post(
         AUTH_URL,
         {
@@ -23,47 +24,42 @@ def get_access_token(client_id, client_secret):
 
     access_token = auth_response_data["access_token"]
 
-    try:
-
-        return access_token
-    except KeyError:
-        print("Couldn't generate access_token!")
+    return access_token
 
 
 def artist_info(token, artist_id):
-
-    BASE_URL = f"https://api.spotify.com/v1/artists/{artist_id}"
+    """Info"""
+    base_url = f"https://api.spotify.com/v1/artists/{artist_id}"
 
     headers = {"Authorization": "Bearer {token}".format(token=token)}
 
-    r = requests.get(BASE_URL, headers=headers)
-    d = r.json()
-
-    artist_name = d["name"]
+    request_data = requests.get(base_url, headers=headers)
+    dict_data = request_data.json()
 
     try:
+        artist_name = dict_data["name"]
         return artist_name
     except KeyError:
-        print("Couldn't fetch data!")
+        return None
 
 
 def get_top_tracks(token, artist_id):
-
-    BASE_URL = f"https://api.spotify.com/v1/artists/{artist_id}/top-tracks?market=ES"
+    """TopTracks"""
+    base_url = f"https://api.spotify.com/v1/artists/{artist_id}/top-tracks?market=ES"
 
     headers = {"Authorization": "Bearer {token}".format(token=token)}
 
-    r = requests.get(BASE_URL, headers=headers)
-    d = r.json()
+    request_data = requests.get(base_url, headers=headers)
+    dict_data = request_data.json()
 
     tracktitle = []
     trackpic = []
     songpreview = []
 
-    if "error" in d:
+    if "error" in dict_data:
         return KeyError
 
-    for track in d["tracks"]:
+    for track in dict_data["tracks"]:
 
         tracktitle.append(track["name"])
         trackpic.append(track["album"]["images"][1]["url"])
@@ -73,17 +69,17 @@ def get_top_tracks(token, artist_id):
 
 
 def search_id(token, artist_name):
-
+    """Search"""
     search_input = artist_name.replace(" ", "%20")
 
-    BASE_URL = f"https://api.spotify.com/v1/search?q={search_input}&type=artist&market=US&limit=1"
+    base_url = f"https://api.spotify.com/v1/search?q={search_input}&type=artist&market=US&limit=1"
 
     headers = {"Authorization": "Bearer {token}".format(token=token)}
 
-    r = requests.get(BASE_URL, headers=headers)
+    request_data = requests.get(base_url, headers=headers)
     try:
-        d = r.json()
-        artist_id = d["artists"]["items"][0]["id"]
+        dict_data = request_data.json()
+        artist_id = dict_data["artists"]["items"][0]["id"]
 
         return artist_id
     except IndexError:

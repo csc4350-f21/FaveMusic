@@ -1,3 +1,4 @@
+"""FAVE APP"""
 from flask_sqlalchemy import SQLAlchemy
 import os
 from dotenv import find_dotenv, load_dotenv
@@ -60,6 +61,7 @@ import models
 
 @login_manager.user_loader
 def load_user(user_id):
+    """User Loader"""
     # since the user_id is just the primary key of our user table, use it in the query for the user
     return models.User.query.get(user_id)
 
@@ -70,71 +72,60 @@ bp = Blueprint("bp", __name__, template_folder="./build")
 @bp.route("/index")
 @login_required
 def index():
+    """Index"""
     # insert the data fetched by your app main page here as a JSON
     nonecheck = models.ArtistID.query.filter_by(user_id=current_user.id).first()
-
     if nonecheck is None:
         nonecheck = True
-        DATA = {
+        default_data = {
             "nonecheck": nonecheck,
             "username": current_user.name,
         }
-        data = json.dumps(DATA)
+        data = json.dumps(default_data)
         return render_template("index.html", data=data,)
-    else:
-        nonecheck = False
-        print(nonecheck, file=sys.stderr)
-        token = spotify.get_access_token("CLIENT_ID", "CLIENT_SECRET")  # spotify token
 
-        artistid_list = []
-        artistname_list = []
-        user_data = models.ArtistID.query.filter_by(user_id=current_user.id).all()
+    nonecheck = False
+    token = spotify.get_access_token("CLIENT_ID", "CLIENT_SECRET")  # spotify token
+    artistid_list = []
+    artistname_list = []
+    for data in models.ArtistID.query.filter_by(user_id=current_user.id).all():
+        artistid_list.append(data.artistid.replace("-" + str(current_user.id), ""))
+        artistname_list.append(data.artistname)
 
-        for data in user_data:
-            dataid = data.artistid.replace("-" + str(current_user.id), "")
-            artistid_list.append(dataid)
-            artistname_list.append(data.artistname)
+    artist_id = random.choice(artistid_list)
 
-        if "get_id" in globals():
-            if get_id == "" or get_id is None:
-                artist_id = random.choice(artistid_list)
-            else:
-                artist_id = get_id
-                del globals()["get_id"]
-        else:
-            artist_id = random.choice(artistid_list)
+    title, pic, preview = spotify.get_top_tracks(token, artist_id)
 
-        title, pic, preview = spotify.get_top_tracks(token, artist_id)
+    tracktitle = random.choice(
+        title
+    )  # get random tracktitle from tracktitle list at index 0 from get_top_tracks return values
+    trackpic = pic[
+        title.index(tracktitle)
+    ]  # get image of that random track at the same index from trackpic list
+    artist_name = spotify.artist_info(
+        token, artist_id
+    )  # get artist's name from artist_info function of spotify.py
+    songpreview = preview[
+        title.index(tracktitle)
+    ]  # get song preview link from songpreview list
 
-        tracktitle = random.choice(
-            title
-        )  # get random tracktitle from tracktitle list at index 0 from get_top_tracks return values
-        index = title.index(tracktitle)  # get index of that random track
-        trackpic = pic[
-            index
-        ]  # get image of that random track at the same index from trackpic list
-        artist_name = spotify.artist_info(
-            token, artist_id
-        )  # get artist's name from artist_info function of spotify.py
-        songpreview = preview[index]  # get song preview link from songpreview list
+    lyrics_url = genius.lyrics_link(
+        "GENIUS_TOKEN", tracktitle, artist_name
+    )  # genius return lyrics link
 
-        lyrics_url = genius.lyrics_link(
-            "GENIUS_TOKEN", tracktitle, artist_name
-        )  # genius return lyrics link
-
-        DATA = {
-            "nonecheck": nonecheck,
-            "username": current_user.name,
-            "len": len(artistid_list),
-            "artistname_list": artistname_list,
-            "tracktitle": tracktitle,
-            "trackpic": trackpic,
-            "artist_name": artist_name,
-            "songpreview": songpreview,
-            "lyrics_url": lyrics_url,
-        }
-        data = json.dumps(DATA)
-        return render_template("index.html", data=data)
+    default_data = {
+        "nonecheck": nonecheck,
+        "username": current_user.name,
+        "len": len(artistid_list),
+        "artistname_list": artistname_list,
+        "tracktitle": tracktitle,
+        "trackpic": trackpic,
+        "artist_name": artist_name,
+        "songpreview": songpreview,
+        "lyrics_url": lyrics_url,
+    }
+    data = json.dumps(default_data)
+    return render_template("index.html", data=data)
 
 
 app.register_blueprint(bp)
@@ -142,14 +133,15 @@ app.register_blueprint(bp)
 
 @app.route("/login")
 def login():
+    """Login"""
     return render_template("login.html")
 
 
 @app.route("/login", methods=["POST"])
 def login_post():
+    """Login"""
     email = request.form.get("email")
     password = request.form.get("password")
-    remember = True if request.form.get("remember") else False
 
     user = models.User.query.filter_by(email=email).first()
 
@@ -161,17 +153,19 @@ def login_post():
         )  # if the user doesn't exist or password is wrong, reload the page
 
     # if the above check passes, then we know the user has the right credentials
-    login_user(user, remember=remember)
+    login_user(user)
     return redirect(url_for("profile"))
 
 
 @app.route("/signup")
 def signup():
+    """Signup"""
     return render_template("signup.html")
 
 
 @app.route("/signup", methods=["POST"])
 def signup_post():
+    """Signup"""
     email = request.form.get("email")
     name = request.form.get("name")
     password = request.form.get("password")
@@ -204,29 +198,27 @@ def signup_post():
 @app.route("/logout")
 @login_required
 def logout():
+    """Logout"""
     logout_user()
     return redirect(url_for("index"))
 
 
 @app.route("/")
 def home():
+    """Home"""
     return render_template("main.html")
-
-
-get_id = ""
 
 
 @app.route("/artistsave", methods=["POST"])
 def artistsave():
+    """Save"""
     token = spotify.get_access_token("CLIENT_ID", "CLIENT_SECRET")  # spotify token
     combineartistlist = flask.request.json.get("combineartistlist")
     print(combineartistlist, file=sys.stderr)
 
     db.session.query(models.ArtistID).filter_by(user_id=current_user.id).delete()
     db.session.commit()
-    global get_id
     for addname in combineartistlist:
-        # global get_id
         get_id = spotify.search_id(token, addname)
         if get_id is None:
             continue
@@ -254,6 +246,7 @@ def artistsave():
 @app.route("/profile")
 @login_required
 def profile():
+    """Profile"""
     id_count = models.ArtistID.query.filter_by(user_id=current_user.id).count()
     return render_template("profile.html", name=current_user.name, count=id_count)
 

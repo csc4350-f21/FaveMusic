@@ -1,3 +1,4 @@
+"""Genius"""
 import requests
 import os
 from dotenv import find_dotenv, load_dotenv
@@ -7,7 +8,7 @@ load_dotenv(find_dotenv())
 
 
 def lyrics_link(access_token, titletrack, artist_name):
-
+    """Lyrics"""
     access_token = os.getenv(access_token)
 
     base_url = "https://api.genius.com/search/"
@@ -22,11 +23,11 @@ def lyrics_link(access_token, titletrack, artist_name):
         "Authorization": "Bearer {access_token}".format(access_token=access_token)
     }
 
-    r = requests.get(base_url, params=params, headers=headers)
-    d = r.json()
+    request_data = requests.get(base_url, params=params, headers=headers)
+    dict_data = request_data.json()
     try:
 
-        return d["response"]["hits"][0]["result"]["url"]
+        return dict_data["response"]["hits"][0]["result"]["url"]
 
     except IndexError:
         return "https://genius.com"

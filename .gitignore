@@ -4,6 +4,7 @@
 __pycache__
 .eslintrc.json
 .pylintrc
+.prettierignore
 
 # dependencies
 /node_modules

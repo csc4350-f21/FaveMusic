@@ -13,9 +13,10 @@ function App() {
   function AddArtist() {
     const TempArtistName = NameRef.current.value;
     if (TempArtistName === '') return;
-    setTempArtistlist((prevTempArtistlist) => (
-      [...prevTempArtistlist, { id: uuidv4(), name: TempArtistName }]
-    ));
+    setTempArtistlist((prevTempArtistlist) => [
+      ...prevTempArtistlist,
+      { id: uuidv4(), name: TempArtistName },
+    ]);
     NameRef.current.value = null;
   }
 
@@ -38,11 +39,13 @@ function App() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ combineartistlist: Combinelist }),
-    }).then((response) => response.json()).then((data) => {
-      console.log(JSON.stringify(data));
-      setArtistlist(data.finalartistlist);
-      setTempArtistlist([]);
-    });
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(JSON.stringify(data));
+        setArtistlist(data.finalartistlist);
+        setTempArtistlist([]);
+      });
   }
 
   function RemoveArtist(id) {
@@ -61,8 +64,12 @@ function App() {
     console.log(Artistlist);
     const list = Artistlist.map((showartistname) => (
       <div>
-        <li style={{ color: 'blue' }} key={uuidv4()}>{showartistname}</li>
-        <button type="button" onClick={() => RemoveArtistMain(showartistname)}>delete</button>
+        <li style={{ color: 'blue' }} key={uuidv4()}>
+          {showartistname}
+        </li>
+        <button type="button" onClick={() => RemoveArtistMain(showartistname)}>
+          delete
+        </button>
       </div>
     ));
     return (
@@ -76,15 +83,15 @@ function App() {
   function ShowList() {
     const list = TempArtistlist.map((showartistname) => (
       <div>
-        <li style={{ color: 'red' }} key={showartistname.id}>{showartistname.name}</li>
-        <button type="button" onClick={() => RemoveArtist(showartistname.id)}>delete</button>
+        <li style={{ color: 'red' }} key={showartistname.id}>
+          {showartistname.name}
+        </li>
+        <button type="button" onClick={() => RemoveArtist(showartistname.id)}>
+          delete
+        </button>
       </div>
     ));
-    return (
-      <>
-        {list}
-      </>
-    );
+    return <>{list}</>;
   }
 
   return (
@@ -105,75 +112,79 @@ function App() {
           &apos;s Favorite Artist&apos;s Top Tracks
         </h1>
       </div>
-      {(args.nonecheck)
-        ? (
+      {args.nonecheck ? (
+        <div>
           <div>
             <div>
-              <div>
-                <p1>Please save your favorite artist&apos;s ID below!</p1>
-              </div>
-              <>
-                <div>
-                  <input type="text" ref={NameRef} placeholder="Enter Name" />
-                  <button type="button" onClick={AddArtist}>Add</button>
-                  <button type="button" onClick={ClickToSave}>Save</button>
-                </div>
-              </>
-              <div>
-                <ol>
-                  <ShowList />
-                </ol>
-              </div>
-            </div>
-          </div>
-        )
-
-        : (
-          <>
-            <div className="big-section">
-              <div className="list">
-                <p2>Your saved artists</p2>
-                <nav>
-                  <ol className="list-item">
-                    <ShowArtistList />
-
-                  </ol>
-                </nav>
-              </div>
-              <div className="artist">
-                <details>
-                  <summary>
-                    <p1 className="glow-on-hover">{args.artist_name}</p1>
-                  </summary>
-                  <div className="nav">
-                    <div className="inner">
-                      <p className="font-effect-fire-animation">{args.tracktitle}</p>
-                      <a href={args.lyrics_url} target="_blank" rel="noreferrer">Lyrics</a>
-
-                      <img alt="trackpic" src={args.trackpic} />
-
-                      <audio controls src={args.songpreview}>
-                        Your browser does not support the
-                        <code>audio</code>
-                        {' '}
-                        element.
-                        <track kind="captions" label="english_captions" />
-                      </audio>
-                    </div>
-                  </div>
-                </details>
-              </div>
-            </div>
-            <div className="subtitle">
               <p1>Please save your favorite artist&apos;s ID below!</p1>
+            </div>
+            <>
               <div>
                 <input type="text" ref={NameRef} placeholder="Enter Name" />
-                <button type="button" onClick={AddArtist}>Add</button>
-                <button type="button" onClick={ClickToSave}>Save</button>
+                <button type="button" onClick={AddArtist}>
+                  Add
+                </button>
+                <button type="button" onClick={ClickToSave}>
+                  Save
+                </button>
               </div>
+            </>
+            <div>
+              <ol>
+                <ShowList />
+              </ol>
             </div>
-          </>
-        )}
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="big-section">
+            <div className="list">
+              <p2>Your saved artists</p2>
+              <nav>
+                <ol className="list-item">
+                  <ShowArtistList />
+                </ol>
+              </nav>
+            </div>
+            <div className="artist">
+              <details>
+                <summary>
+                  <p1 className="glow-on-hover">{args.artist_name}</p1>
+                </summary>
+                <div className="nav">
+                  <div className="inner">
+                    <p className="font-effect-fire-animation">{args.tracktitle}</p>
+                    <a href={args.lyrics_url} target="_blank" rel="noreferrer">
+                      Lyrics
+                    </a>
+
+                    <img alt="trackpic" src={args.trackpic} />
+
+                    <audio controls src={args.songpreview}>
+                      Your browser does not support the
+                      <code>audio</code> element.
+                      <track kind="captions" label="english_captions" />
+                    </audio>
+                  </div>
+                </div>
+              </details>
+            </div>
+          </div>
+          <div className="subtitle">
+            <p1>Please save your favorite artist&apos;s ID below!</p1>
+            <div>
+              <input type="text" ref={NameRef} placeholder="Enter Name" />
+              <button type="button" onClick={AddArtist}>
+                Add
+              </button>
+              <button type="button" onClick={ClickToSave}>
+                Save
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }
