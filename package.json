@@ -7,13 +7,15 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "^4.0.2",
+    "uuid": "^8.3.2",
     "web-vitals": "^1.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "./node_modules/.bin/eslint"
   },
   "eslintConfig": {
     "extends": [
@@ -33,5 +35,9 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:8081"
+  "proxy": "http://localhost:8081",
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^18.2.1"
+  }
 }

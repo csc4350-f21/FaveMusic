@@ -2,6 +2,8 @@
 
 .env
 __pycache__
+.eslintrc.json
+.pylintrc
 
 # dependencies
 /node_modules

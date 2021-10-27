@@ -70,7 +70,7 @@ bp = Blueprint("bp", __name__, template_folder="./build")
 @bp.route("/index")
 @login_required
 def index():
-    # TODO: insert the data fetched by your app main page here as a JSON
+    # insert the data fetched by your app main page here as a JSON
     nonecheck = models.ArtistID.query.filter_by(user_id=current_user.id).first()
 
     if nonecheck is None:
@@ -154,7 +154,6 @@ def login_post():
     user = models.User.query.filter_by(email=email).first()
 
     # check if the user actually exists
-    # take the user-supplied password, hash it, and compare it to the hashed password in the database
     if not user or not check_password_hash(user.password, password):
         flash("Please check your login details and try again.")
         return redirect(
@@ -264,4 +263,3 @@ if __name__ == "__main__":
     app.run(
         host=os.getenv("IP", "0.0.0.0"), port=int(os.getenv("PORT", 8080)), debug=True
     )
-
