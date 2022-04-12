@@ -1,5 +1,5 @@
 # Milestone 1 - project1-cle31
-## Heroku app: [https://polar-lowlands-81051.herokuapp.com/]
+## Heroku app: [https://favemusic.herokuapp.com/]
 ## Libraries: 
 * Flask
 * python-dotenv
